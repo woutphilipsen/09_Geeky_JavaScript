@@ -1,9 +1,11 @@
 'use strict';
 
-(function(window, $) {
+(function(window, $, Routing) {
     window.RepLogApp = function($wrapper) {
         this.$wrapper = $wrapper;
         this.helper = new Helper($wrapper);
+
+        this.loadReplogs();
 
         // ATTACH LISTENERS TO DOM ELEMENTS WITH DELEGATE SELECTORS FTW
         this.$wrapper.on(
@@ -29,6 +31,18 @@
     $.extend(window.RepLogApp.prototype, {
         _selectors: {
             newRepForm: '.js-new-rep-log-form'
+        },
+
+        loadReplogs: function() {
+            var self = this;
+            $.ajax({
+                url: Routing.generate('rep_log_list'),
+                success: function(data) {
+                    $.each(data.items, function(key, repLog) {
+                        self._addRow(repLog);
+                    });
+                }
+            });
         },
 
         updateTotalWeightLifted: function() {
@@ -154,4 +168,4 @@
             return totalWeight;
         }
     });
-})(window, jQuery);
+})(window, jQuery, Routing);
